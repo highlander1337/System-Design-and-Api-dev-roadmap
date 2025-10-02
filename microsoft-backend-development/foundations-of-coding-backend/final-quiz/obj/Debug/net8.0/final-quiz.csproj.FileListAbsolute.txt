@@ -1,0 +1,15 @@
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\bin\Debug\net8.0\final-quiz.exe
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\bin\Debug\net8.0\final-quiz.deps.json
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\bin\Debug\net8.0\final-quiz.runtimeconfig.json
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\bin\Debug\net8.0\final-quiz.dll
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\bin\Debug\net8.0\final-quiz.pdb
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.GeneratedMSBuildEditorConfig.editorconfig
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.AssemblyInfoInputs.cache
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.AssemblyInfo.cs
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.csproj.CoreCompileInputs.cache
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.sourcelink.json
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.dll
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\refint\final-quiz.dll
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.pdb
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\final-quiz.genruntimeconfig.cache
+D:\workspace\Software-Engineer\System-Design-and-Api-dev-roadmap\microsoft-backend-development\foundations-of-coding-backend\final-quiz\obj\Debug\net8.0\ref\final-quiz.dll
