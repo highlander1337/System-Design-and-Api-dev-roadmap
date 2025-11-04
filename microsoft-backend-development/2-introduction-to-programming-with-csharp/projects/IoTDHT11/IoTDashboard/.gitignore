@@ -1,0 +1,45 @@
+# .gitignore for IoTDashboard (C#/.NET project)
+
+# Build results
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+
+# Test results
+TestResults/
+*.trx
+
+# Publish output
+publish/
+*.Publish.xml
+
+# Others
+*.vs/

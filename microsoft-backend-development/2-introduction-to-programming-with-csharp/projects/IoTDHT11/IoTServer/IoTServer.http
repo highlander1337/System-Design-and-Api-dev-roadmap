@@ -1,0 +1,6 @@
+@IoTServer_HostAddress = http://localhost:5000
+
+GET {{IoTServer_HostAddress}}/sensor/
+Accept: application/json
+
+###

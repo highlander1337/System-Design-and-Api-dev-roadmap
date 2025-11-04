@@ -1,0 +1,190 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.SignalR.Client
+@using Blazorise.Charts
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<h3 class="mb-4">IoT Sensor Dashboard (Live Charts)</h3>
+
+@if (data.Count == 0)
+{
+    <p>Loading data...</p>
+}
+else
+{
+    @foreach (IGrouping<string, SensorData> deviceGroup in data.GroupBy(d => d.DeviceId))
+    {
+        <div class="mb-5">
+            <h5>@deviceGroup.Key</h5>
+
+            @if (!deviceCharts.ContainsKey(deviceGroup.Key))
+            {
+                deviceCharts[deviceGroup.Key] = null!;
+            }
+
+            <LineChart @ref="deviceCharts[deviceGroup.Key]" TItem="double" Options="chartOptions" />
+        </div>
+    }
+}
+
+@code {
+    private List<SensorData> data = new List<SensorData>();
+    private HubConnection? hubConnection;
+    private readonly Dictionary<string, LineChart<double>?> deviceCharts = new();
+
+    private LineChartOptions chartOptions = new()
+    {
+        Responsive = true,
+        Plugins = new ChartPlugins
+        {
+            Title = new ChartTitle
+            {
+                Display = true,
+                Text = "Temperature & Humidity"
+            }
+        }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // 1) Load historical data
+        var existingData = await Http.GetFromJsonAsync<List<SensorData>>("http://localhost:5000/api/sensor");
+        if (existingData is { Count: > 0 })
+        {
+            data.AddRange(existingData.OrderBy(d => d.Timestamp));
+
+            foreach (var device in data.Select(d => d.DeviceId).Distinct())
+                if (!deviceCharts.ContainsKey(device))
+                    deviceCharts[device] = null!;
+
+            StateHasChanged();
+            await Task.Delay(50);
+        }
+
+        // 2) Initialize charts for all devices with historical data at once
+        foreach (var device in deviceCharts.Keys.ToList())
+        {
+            var chart = deviceCharts[device];
+            if (chart != null)
+            {
+                var points = data.Where(d => d.DeviceId == device).OrderBy(d => d.Timestamp).ToList();
+                await InitializeChartWithData(chart, points, device);
+            }
+        }
+
+        // 3) Setup SignalR
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl("http://localhost:5000/sensorHub")
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<SensorData>("ReceiveSensorData", async sensor =>
+        {
+            data.Add(sensor);
+
+            if (!deviceCharts.ContainsKey(sensor.DeviceId))
+            {
+                deviceCharts[sensor.DeviceId] = null!;
+                await InvokeAsync(StateHasChanged);
+                await Task.Delay(50);
+            }
+
+            var chart = deviceCharts[sensor.DeviceId];
+
+            if (chart != null && (chart.Data == null || chart.Data.Datasets.Count < 2))
+            {
+                // If chart was just created, initialize with first point
+                await InitializeChartWithData(chart, new List<SensorData> { sensor }, sensor.DeviceId);
+            }
+            else
+            {
+                // Append real-time point
+                await AddNewPoint(chart!, sensor);
+            }
+        });
+
+        try
+        {
+            await hubConnection.StartAsync();
+            Console.WriteLine("✅ SignalR connected to sensorHub");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to connect to SignalR: {ex.Message}");
+        }
+    }
+
+    // Initialization helper: full historical data
+    private async Task InitializeChartWithData(LineChart<double> chart, List<SensorData> points, string deviceId)
+    {
+        if (chart == null) return;
+
+        List<string>? labels = points.Select(p => p.Timestamp.ToLocalTime().ToString("HH:mm:ss")).ToList();
+
+        LineChartDataset<double>? tempDataset = new LineChartDataset<double>
+        {
+            Label = "Temperature (°C)",
+            BackgroundColor = "rgba(255,99,132,0.2)",
+            BorderColor = "rgba(255,99,132,1)",
+            Fill = false,
+            Data = points.Select(p => p.TemperatureC).ToList()
+        };
+
+        LineChartDataset<double>? humDataset = new LineChartDataset<double>
+        {
+            Label = "Humidity (%)",
+            BackgroundColor = "rgba(54,162,235,0.2)",
+            BorderColor = "rgba(54,162,235,1)",
+            Fill = false,
+            Data = points.Select(p => p.Humidity).ToList()
+        };
+
+        await chart.AddLabelsDatasetsAndUpdate(labels, tempDataset, humDataset);
+        Console.WriteLine($"Initialized chart for {deviceId} with {points.Count} points");
+    }
+
+    // Real-time updates helper
+    private async Task AddNewPoint(LineChart<double> chart, SensorData sensor)
+{
+    if (chart == null || chart.Data == null || chart.Data.Datasets.Count < 2)
+        return;
+
+    // append new label
+    var labels = chart.Data.Labels.ToList();
+    labels.Add(sensor.Timestamp.ToLocalTime().ToString("HH:mm:ss"));
+
+    // rolling window: keep last N points
+    const int maxPoints = 10;
+    if (labels.Count > maxPoints)
+        labels.RemoveAt(0);
+
+    chart.Data.Labels = labels; // assign back to update X-axis
+
+    // Temperature dataset
+    var tempData = (chart.Data.Datasets[0] as LineChartDataset<double>)?.Data.ToList() ?? new List<double>();
+    tempData.Add(sensor.TemperatureC);
+    if (tempData.Count > maxPoints) tempData.RemoveAt(0);
+    await chart.SetData(0, tempData);
+
+    // Humidity dataset
+    var humData = (chart.Data.Datasets[1] as LineChartDataset<double>)?.Data.ToList() ?? new List<double>();
+    humData.Add(sensor.Humidity);
+    if (humData.Count > maxPoints) humData.RemoveAt(0);
+    await chart.SetData(1, humData);
+
+    await chart.Update();
+    Console.WriteLine($"Added new point to chart for {sensor.DeviceId}");
+}
+
+
+    public class SensorData
+    {
+        public string DeviceId { get; set; } = string.Empty;
+        public double TemperatureC { get; set; }
+        public double Humidity { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
+}

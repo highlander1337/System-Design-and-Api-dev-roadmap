@@ -1,0 +1,42 @@
+# Ignore build output
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore NuGet packages
+*.nupkg
+packages/
+.nuget/
+
+# Ignore logs
+*.log
+
+# Ignore environment files
+.env
+
+# Ignore publish output
+publish/
+out/
+
+# Ignore test results
+TestResults/
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore DHT11 sensor data files (if any)
+*.csv
+*.json
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
